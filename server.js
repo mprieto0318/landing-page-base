@@ -10,10 +10,24 @@ const PORT = process.env.PORT || 3000;
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// para subirlo en railway
+app.use((req, res, next) => {
+    res.setHeader(
+        'Content-Security-Policy',
+        "default-src 'self'; " +
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://use.fontawesome.com; " +
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
+        "font-src 'self' https://fonts.gstatic.com; " +
+        "img-src 'self' data:;"
+    );
+    next();
+});
+
 app.use(express.static('public')); // Sirve archivos estáticos
 
 // Configurar Nodemailer para Gmail
-/*
+
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -21,8 +35,8 @@ const transporter = nodemailer.createTransport({
         pass: process.env.GMAIL_PASS
     }
 });
-*/
 
+/*
 const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
     port: 587, // Puerto estándar con STARTTLS
@@ -38,6 +52,7 @@ const transporter = nodemailer.createTransport({
     greetingTimeout: 10000,
     socketTimeout: 10000
 });
+*/
 
 // Ruta para enviar correo
 app.post('/enviar-correo', async (req, res) => {
