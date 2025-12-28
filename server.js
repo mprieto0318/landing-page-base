@@ -17,9 +17,12 @@ app.use((req, res, next) => {
         'Content-Security-Policy',
         "default-src 'self'; " +
         "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://use.fontawesome.com; " +
-        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
-        "font-src 'self' https://fonts.gstatic.com; " +
-        "img-src 'self' data:;"
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; " +
+        "font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net; " +
+        "img-src 'self' data: https: blob:;" +
+        "connect-src 'self' https://cdn.jsdelivr.net;" +
+        "frame-src 'none';" +
+        "object-src 'none'"
     );
     next();
 });
