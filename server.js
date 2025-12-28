@@ -13,6 +13,7 @@ app.use(express.json());
 app.use(express.static('public')); // Sirve archivos estáticos
 
 // Configurar Nodemailer para Gmail
+/*
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -20,9 +21,36 @@ const transporter = nodemailer.createTransport({
         pass: process.env.GMAIL_PASS
     }
 });
+*/
+
+const transporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 587, // Puerto estándar con STARTTLS
+    secure: false, // true para 465, false para otros puertos
+    auth: {
+        user: process.env.GMAIL_USER,
+        pass: process.env.GMAIL_PASS // Debe ser la APP PASSWORD
+    },
+    tls: {
+        rejectUnauthorized: false // Ayuda con certificados en Railway
+    },
+    connectionTimeout: 10000, // 10 segundos
+    greetingTimeout: 10000,
+    socketTimeout: 10000
+});
 
 // Ruta para enviar correo
 app.post('/enviar-correo', async (req, res) => {
+
+    // Agrega al inicio del try-catch:
+    if (!process.env.GMAIL_USER || !process.env.GMAIL_PASS) {
+        console.error('Faltan variables de entorno GMAIL_USER o GMAIL_PASS');
+        return res.status(500).json({ 
+            success: false, 
+            message: 'Error de configuración del .env servidor' 
+        });
+    }
+
     const { name, email, phone, message } = req.body;
 
     const mailOptions = {
