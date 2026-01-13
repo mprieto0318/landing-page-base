@@ -29,7 +29,7 @@ app.use((req, res, next) => {
 
 app.use(express.static('public')); // Sirve archivos estáticos
 
-// Configurar Nodemailer para Gmail
+// Configurar Nodemailer para Gmail 
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',

@@ -10942,6 +10942,7 @@ p {
     margin-right: 0;
   }
 }
+/*
 header.masthead {
   padding-top: 10.5rem;
   padding-bottom: 6rem;
@@ -10952,7 +10953,48 @@ header.masthead {
   background-attachment: scroll;
   background-position: center center;
   background-size: cover;
+}*/
+
+header.masthead {
+  position: relative;
+  overflow: hidden;
+
+  padding-top: 10.5rem;
+  padding-bottom: 6rem;
+  text-align: center;
+  color: #fff;
 }
+
+header.masthead .masthead-video {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+
+  min-width: 100%;
+  min-height: 100%;
+
+  width: auto;
+  height: auto;
+
+  transform: translate(-50%, -50%);
+  z-index: 0;
+  object-fit: cover;
+}
+
+header.masthead .container {
+  position: relative;
+  z-index: 2;
+}
+
+header.masthead::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1;
+}
+
+
 header.masthead .masthead-subheading {
   font-size: 1.5rem;
   font-style: italic;
@@ -10967,6 +11009,7 @@ header.masthead .masthead-heading {
   margin-bottom: 2rem;
   font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
+
 
 @media (min-width: 768px) {
   header.masthead {
@@ -11068,6 +11111,25 @@ header.masthead .masthead-heading {
 }
 .portfolio-modal .close-modal:hover {
   opacity: 0.3;
+}
+
+/* Ajustes para el slider de 2 filas */
+.portfolioSwiper {
+    width: 100%;
+    height: auto;
+    padding-bottom: 50px; /* Espacio para los puntitos de abajo */
+}
+
+.portfolioSwiper .swiper-slide {
+    height: calc((100% - 30px) / 2) !important; /* Calcula espacio para 2 filas */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#portfolio .portfolio-item {
+    width: 100%;
+    margin: 0; /* Swiper maneja los márgenes ahora */
 }
 
 .timeline {
@@ -11406,4 +11468,24 @@ container
 
 .loading-spinner {
     text-align: center;
+}
+
+
+/* Estado inicial de la imagen */
+.reveal-img {
+    opacity: 0;
+    transform: translateY(30px) scale(0.9);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+/* Estado cuando se muestra (activado por JS) */
+.reveal-img.is-visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+/* Efecto hover opcional para darle dinamismo */
+.reveal-img:hover {
+    transform: translateY(-5px) scale(1.05) !important;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2) !important;
 }

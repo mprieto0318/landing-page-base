@@ -41,5 +41,55 @@ window.addEventListener('DOMContentLoaded', event => {
             }
         });
     });
+   
+    const swiper = new Swiper(".portfolioSwiper", {
+        slidesPerView: 1,      // 1 columna en móviles
+        grid: {
+            rows: 2,           // 2 filas
+            fill: 'row'
+        },
+        spaceBetween: 30,      // Espacio entre carpetas
+        autoplay: {
+            delay: 8000,
+            disableOnInteraction: false,
+        },
+        pagination: {
+            el: ".swiper-pagination",
+            clickable: true,
+        },
+        breakpoints: {
+            // Cuando la pantalla es >= 768px (Tablets)
+            768: {
+                slidesPerView: 2,
+                grid: { rows: 2 }
+            },
+            // Cuando la pantalla es >= 1200px (Desktop)
+            1200: {
+                slidesPerView: 3, // 3 columnas visibles
+                grid: { rows: 2 }
+            }
+        },
+        // Habilitar movimiento táctil
+        grabCursor: true,
+        mousewheel: false,
+    }); 
+
+    // Función para animar imágenes al hacer scroll
+    const revealOnScroll = function() {
+        const images = document.querySelectorAll('.reveal-img');
+        const windowHeight = window.innerHeight;
+
+        images.forEach(img => {
+            const objectTop = img.getBoundingClientRect().top;
+            // Si el objeto está a 150px del borde inferior de la pantalla
+            if (objectTop < windowHeight - 150) {
+                img.classList.add('is-visible');
+            }
+        });
+    };
+
+    // Ejecutar al cargar y al hacer scroll
+    revealOnScroll();
+    window.addEventListener('scroll', revealOnScroll);
 
 });
