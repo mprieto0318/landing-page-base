@@ -11003,9 +11003,9 @@ header.masthead .masthead-subheading {
   font-family: "Roboto Slab", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 header.masthead .masthead-heading {
-  font-size: 3.25rem;
+  font-size: 2.25rem;
   font-weight: 700;
-  line-height: 3.25rem;
+  line-height: 2.25rem;
   margin-bottom: 2rem;
   font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
@@ -11023,9 +11023,9 @@ header.masthead .masthead-heading {
     margin-bottom: 2rem;
   }
   header.masthead .masthead-heading {
-    font-size: 4.5rem;
+    font-size: 3.5rem;
     font-weight: 700;
-    line-height: 4.5rem;
+    line-height: 3.5rem;
     margin-bottom: 4rem;
   }
 }
@@ -11488,4 +11488,101 @@ container
 .reveal-img:hover {
     transform: translateY(-5px) scale(1.05) !important;
     box-shadow: 0 10px 20px rgba(0,0,0,0.2) !important;
+}
+
+
+.fab-wrapper {
+    position: fixed !important;
+    bottom: 150px !important;
+    right: 30px !important;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column-reverse; /* Esto empuja las opciones hacia ARRIBA */
+    align-items: center;
+    gap: 15px;
+}
+
+.fab-main {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: #ffc800 !important;
+    border: none;
+    color: white;
+    font-size: 24px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.fab-options {
+    display: flex;
+    flex-direction: column-reverse; /* Las opciones también se apilan hacia arriba */
+    gap: 12px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px); /* Empieza un poco abajo para el efecto de subida */
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* Estado Activo */
+.fab-wrapper.active .fab-options {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.fab-wrapper.active #fabIcon {
+    transform: rotate(45deg);
+}
+
+.fab-item {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-decoration: none;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+    transition: transform 0.2s;
+}
+
+.fab-item:hover {
+    transform: scale(1.1);
+    color: white;
+}
+
+/* Definición de la animación principal */
+@keyframes fadeInUpCustom {
+    0% {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Clase base para los elementos que se animan */
+.anim-fade-up {
+    opacity: 0; /* Empiezan invisibles */
+    animation: fadeInUpCustom 0.8s ease-out forwards;
+}
+
+/* Delays para el efecto secuencial */
+.delay-1 { animation-delay: 0.3s; }
+.delay-2 { animation-delay: 0.6s; }
+.delay-3 { animation-delay: 0.9s; }
+
+/* Efecto extra: Brillo sutil al texto principal */
+.masthead-heading {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease;
+}
+
+.masthead-heading:hover {
+    transform: scale(1.02); /* Pequeño pulso al pasar el mouse */
 }

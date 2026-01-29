@@ -45,7 +45,7 @@ window.addEventListener('DOMContentLoaded', event => {
     const swiper = new Swiper(".portfolioSwiper", {
         slidesPerView: 1,      // 1 columna en móviles
         grid: {
-            rows: 2,           // 2 filas
+            rows: 3,           // 2 filas
             fill: 'row'
         },
         spaceBetween: 30,      // Espacio entre carpetas
@@ -91,5 +91,30 @@ window.addEventListener('DOMContentLoaded', event => {
     // Ejecutar al cargar y al hacer scroll
     revealOnScroll();
     window.addEventListener('scroll', revealOnScroll);
+
+    const fabMain = document.getElementById('fabMain');
+    const fabOptions = document.getElementById('fabOptions');
+    const fabIcon = document.getElementById('fabIcon');
+
+    if (fabMain) {
+        fabMain.addEventListener('click', function(e) {
+            e.stopPropagation();
+            
+            // Toggle de visibilidad
+            if (fabOptions.style.display === 'none' || fabOptions.style.display === '') {
+                fabOptions.style.display = 'flex';
+                fabIcon.style.transform = 'rotate(45deg)';
+            } else {
+                fabOptions.style.display = 'none';
+                fabIcon.style.transform = 'rotate(0deg)';
+            }
+        });
+    }
+
+    // Cerrar si hacen clic fuera
+    document.addEventListener('click', function() {
+        fabOptions.style.display = 'none';
+        fabIcon.style.transform = 'rotate(0deg)';
+    });
 
 });
