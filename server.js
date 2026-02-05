@@ -7,14 +7,13 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// 🔴 CORS para producción - configura específicamente
+// Configuración de CORS
 const allowedOrigins = process.env.NODE_ENV === 'production' 
-  ? ['https://tudominio.onrender.com', 'https://tudominio.com'] // Cambia esto
+  ? ['https://landing-page-base-drzy.onrender.com/', 'https://tudominio.com'] 
   : ['http://localhost:3000', 'http://localhost:8080'];
 
 app.use(cors({
   origin: function (origin, callback) {
-    // Permite solicitudes sin origen (como apps móviles o curl)
     if (!origin) return callback(null, true);
     if (allowedOrigins.indexOf(origin) === -1) {
       const msg = 'Origen no permitido por CORS';
@@ -30,31 +29,28 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Servir archivos estáticos
-app.use(express.static('public'));
+// Usamos path.resolve para asegurar la ruta absoluta
+app.use(express.static(path.resolve(__dirname, 'public')));
 
-// 🔴 Configurar Nodemailer para PRODUCCIÓN (Render/Heroku/Railway)
+// Configurar Nodemailer
 const createTransporter = () => {
-  // En producción, usa la configuración específica
   if (process.env.NODE_ENV === 'production') {
     return nodemailer.createTransport({
       host: 'smtp.gmail.com',
       port: 587,
-      secure: false, // true para 465, false para otros puertos
+      secure: false, 
       auth: {
         user: process.env.GMAIL_USER,
         pass: process.env.GMAIL_PASS
       },
       tls: {
-        // 🔴 IMPORTANTE para Render/Railway
         rejectUnauthorized: false
       },
-      // Timeouts más largos para producción
-      connectionTimeout: 30000, // 30 segundos
+      connectionTimeout: 30000,
       greetingTimeout: 30000,
       socketTimeout: 30000
     });
   } else {
-    // Para desarrollo local
     return nodemailer.createTransport({
       service: 'gmail',
       auth: {
@@ -71,9 +67,8 @@ const transporter = createTransporter();
 app.post('/enviar-correo', async (req, res) => {
   console.log('📨 Solicitud POST recibida en /enviar-correo');
   
-  // 🔴 Verificar que tenemos las variables de entorno
   if (!process.env.GMAIL_USER || !process.env.GMAIL_PASS) {
-    console.error('❌ Faltan variables de entorno GMAIL_USER o GMAIL_PASS');
+    console.error('❌ Faltan variables de entorno');
     return res.status(500).json({ 
       success: false, 
       message: 'Error de configuración del servidor' 
@@ -82,26 +77,16 @@ app.post('/enviar-correo', async (req, res) => {
 
   const { name, email, phone, message } = req.body;
   
-  // 🔴 Validar campos requeridos
   if (!name || !email || !message) {
     return res.status(400).json({
       success: false,
-      message: 'Por favor completa los campos requeridos: Nombre, Email y Mensaje'
-    });
-  }
-
-  // Validar formato de email
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email)) {
-    return res.status(400).json({
-      success: false,
-      message: 'Por favor ingresa un email válido'
+      message: 'Por favor completa los campos requeridos'
     });
   }
 
   const mailOptions = {
-    from: `"${name}" <${process.env.GMAIL_USER}>`, // 🔴 Cambia esto
-    replyTo: email, // Para que puedas responder directamente
+    from: `"${name}" <${process.env.GMAIL_USER}>`,
+    replyTo: email,
     to: process.env.GMAIL_USER,
     subject: `📧 Nuevo mensaje de contacto de ${name}`,
     html: `
@@ -116,73 +101,48 @@ app.post('/enviar-correo', async (req, res) => {
         </p>
         <hr>
         <p style="color: #666; font-size: 12px;">
-          Enviado desde tu landing page - ${new Date().toLocaleString()}
+          Enviado desde Medellín By Night Tours - ${new Date().toLocaleString()}
         </p>
       </div>
     `,
-    text: `Nuevo mensaje de contacto:\n\nNombre: ${name}\nEmail: ${email}\nTeléfono: ${phone}\nMensaje: ${message}`
+    text: `Nombre: ${name}\nEmail: ${email}\nTeléfono: ${phone}\nMensaje: ${message}`
   };
 
   try {
-    console.log('🔄 Intentando enviar correo...');
-    
-    // Verificar conexión primero
     await transporter.verify();
-    console.log('✅ Conexión SMTP verificada');
-    
-    // Enviar correo
     const info = await transporter.sendMail(mailOptions);
     console.log(`✅ Correo enviado: ${info.messageId}`);
-    
     res.json({ 
       success: true, 
-      message: '¡Correo enviado exitosamente! Te contactaremos pronto.' 
+      message: '¡Correo enviado exitosamente!' 
     });
-    
   } catch (error) {
-    console.error('❌ Error detallado enviando correo:', error);
-    
-    // Mensajes de error más específicos
-    let errorMessage = 'Error al enviar el correo';
-    
-    if (error.code === 'EAUTH') {
-      errorMessage = 'Error de autenticación. Verifica las credenciales de Gmail.';
-    } else if (error.code === 'ECONNECTION') {
-      errorMessage = 'Error de conexión con el servidor de correo.';
-    } else if (error.code === 'ETIMEDOUT') {
-      errorMessage = 'Tiempo de espera agotado. Intenta nuevamente.';
-    }
-    
+    console.error('❌ Error enviando correo:', error);
     res.status(500).json({ 
       success: false, 
-      message: errorMessage,
-      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+      message: 'Error al enviar el correo'
     });
   }
 });
 
-// 🔴 Ruta para verificar que el servidor está funcionando
+// Ruta de salud
 app.get('/health', (req, res) => {
-  res.json({ 
-    status: 'OK', 
-    timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV || 'development'
-  });
+  res.json({ status: 'OK', environment: process.env.NODE_ENV || 'development' });
 });
 
-// Ruta principal
+// Ruta principal explícita
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.sendFile(path.resolve(__dirname, 'public', 'index.html'));
 });
 
-// Para SPA - redirigir todas las rutas a index.html
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+// 🔴 SOLUCIÓN FINAL: Usar una RegEx para capturar todo
+// Esto evita que la librería path-to-regexp intente buscar nombres de parámetros
+app.get(/^(?!\/(enviar-correo|health)).*$/, (req, res) => {
+  res.sendFile(path.resolve(__dirname, 'public', 'index.html'));
 });
 
 // Iniciar servidor
 app.listen(PORT, () => {
   console.log(`🚀 Servidor corriendo en puerto ${PORT}`);
   console.log(`🌍 Modo: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`📧 Email configurado: ${process.env.GMAIL_USER ? 'Sí' : 'No'}`);
 });

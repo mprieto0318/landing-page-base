@@ -117,4 +117,24 @@ window.addEventListener('DOMContentLoaded', event => {
         fabIcon.style.transform = 'rotate(0deg)';
     });
 
+
+    // Popup de cookies
+    const cookiePopup = document.getElementById('cookie-popup');
+    const acceptBtn = document.getElementById('accept-cookies');
+
+    // Verificar si ya aceptó las cookies anteriormente
+    if (!localStorage.getItem('cookiesAceptadas')) {
+        // Pequeño delay para que no sea tan brusco al cargar
+        setTimeout(() => {
+            cookiePopup.style.display = 'block';
+        }, 1000);
+    }
+
+    // Evento al hacer clic en aceptar
+    acceptBtn.addEventListener('click', function() {
+        localStorage.setItem('cookiesAceptadas', 'true');
+        cookiePopup.style.fadeOut = "slow"; // Efecto visual simple
+        cookiePopup.style.display = 'none';
+    });
+
 });
